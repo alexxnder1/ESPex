@@ -1,0 +1,13 @@
+#pragma once
+#include "libraries/gui.h"
+
+namespace IndexMenu
+{
+    inline bool scan = false;
+    void show();
+    void hide();
+    void WIFI();
+    void BT();
+    void loop();
+    void About();   
+}
