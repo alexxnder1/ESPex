@@ -4,6 +4,7 @@
 #include "defines.h"
 #include "index.h"
 #include "libraries/gui.h"
+#include "libraries/gui/text.h"
 
 std::vector<std::string> networks_names;
 List* networks = new List(std::string("WiFis"), networks_names, 0, 1);
@@ -15,7 +16,9 @@ void IndexMenu::WIFI()
     gui.destroyList();
 
     std::string str = std::string("Scanning...");
-    gui.showText(str, 1, SSD1306_WHITE,  SCREEN_WIDTH/2 - 6*str.size()/2, SCREEN_HEIGHT/2);   
+    Text scanning = Text(str, SSD1306_WHITE, Text::Vector2 {SCREEN_WIDTH/2 - 6*str.size()/2, SCREEN_HEIGHT/2}, 1);
+
+    gui.createText(&scanning);   
     WiFi.scanNetworks(true);
 
     int n = WiFi.scanComplete();

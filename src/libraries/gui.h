@@ -7,7 +7,7 @@
 
 #include "libraries/list.h"
 #include "libraries/gui.h"
-#include "libraries/text.h"
+#include "libraries/gui/text.h"
 
 class GUI {
     
@@ -19,12 +19,12 @@ class GUI {
         void assignLastMenu(void (*m)());
 
         List* GlobalList;
-        std::vector<Text> texts;
+        std::vector<GUIElement*> elements;
         GUI(Adafruit_SSD1306* disp);
         void init();
         void clear();
         void updateControls(uint16_t x, uint16_t y, bool pressed);
-        void showText (std::string text, int16_t size, uint16_t c, int16_t x, int16_t y);
+        void createText (Text* text);
         void showList (List* list);
         void destroyList ();
         void scrollDown ();
