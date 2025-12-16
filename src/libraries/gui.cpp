@@ -10,17 +10,15 @@ GUI::GUI(Adafruit_SSD1306* disp)
     display = disp;
 }
 
-
+// creating text
 void GUI::createText(Text* text)
 {
-  display->setTextSize(text->size);
+  display->setTextSize(text->textSize);
   display->setTextColor(text->c);
   display->setCursor(text->position.x, text->position.y);
   display->println(text->text.c_str());
   display->display();
 
-  // Text t = new Text(text, size, c,x, y);
-  // this->texts.push_back(t);
   Serial.println(text->text.c_str());
 }
 
@@ -28,8 +26,13 @@ void GUI::clear()
 {
   display->clearDisplay();
   display->display();
+  for(GUIElement* elem : this->elements)
+      delete elem;
+
+  this->elements.clear();
   // this->texts.clear();
 }
+
 // ters
 void GUI::destroyList()
 {
@@ -40,7 +43,6 @@ void GUI::destroyList()
     // this->GlobalList->sele
   }
 }
-
 
 void GUI::showList(List* list)
 {
@@ -53,18 +55,26 @@ void GUI::showList(List* list)
 void GUI::updateList()
 {
   this->clear();
-  Text title(this->GlobalList->title, SSD1306_WHITE, Text::Vector2 { SCREEN_WIDTH/2-(12*this->GlobalList->title.size())/2, 0}, 2);
-  this->createText(&title);
+  Text* title = new Text(this->GlobalList->title, SSD1306_WHITE, Text::Vector2 { SCREEN_WIDTH/2-(12*this->GlobalList->title.size())/2, 0}, 2);
+  this->createText(title);
 
   Serial.println(this->GlobalList->title.c_str());
   int index=0;
   for(const auto& item : this->GlobalList->options)
   {
-    Text option(this->GlobalList->selectedMenu == index ? (std::string("* ") + item).c_str() : item.c_str(), SSD1306_WHITE, Text::Vector2 { 0,16+6+this->GlobalList->textSize*8*index}, this->GlobalList->textSize);
-    this->createText(&option);
+    Text* option = new Text(this->GlobalList->selectedMenu == index ? (std::string("* ") + item).c_str() : item.c_str(), SSD1306_WHITE, Text::Vector2 { static_cast<int16_t>(0), static_cast<int16_t>(16+6+this->GlobalList->textSize*8*index)}, this->GlobalList->textSize);
+    this->createText(option);
     index++;
   }
   
+}
+
+GUI::~GUI()
+{
+  for(GUIElement* elem : this->elements)
+      delete elem;
+
+  this->elements.clear();
 }
 
 void GUI::assignLastMenu(void (*m)())
@@ -119,24 +129,54 @@ void GUI::updateControls(uint16_t x, uint16_t y, bool pressed)
     this->GlobalList->functions[this->GlobalList->selectedMenu]();
   }
 }
+#define SCROLL_SIZE 16
+
 void GUI::scrollUp()
 {
-  // std::vector<Text> textsCopy = this->texts;
-  // this->clear();
-  // for(Text& text: textsCopy)
-  // {
-  //   this->createText(text.text, text.size, text.c, text.x, text.y+16);
-  // }
+  for(int i = 0; i <= this->elements.size()-1; i++)
+  {
+    if(this->elements[i] == nullptr)
+      continue;
+
+      GUIElement* elem = this->elements[i];
+      if(elem != nullptr)
+      {
+        int16_t newY =  elem->position.y+SCROLL_SIZE;
+        this->updateElementPosition(elem, GUIElement::Vector2 { elem->position.x, newY});
+      }
+  }
 }
 
 void GUI::scrollDown()
 {
-  // std::vector<Text> textsCopy = this->texts;
-  // this->clear();
-  // for(Text& text: textsCopy)
-  // {
-  //   this->createText(text.text, text.size, text.c, text.x, text.y-16);
-  // }
+  for(int i = this->elements.size()-1; i >= 0; i--)
+  {
+    if(this->elements[i] == nullptr)
+      continue;
+
+    GUIElement* elem = this->elements[i];
+      if(elem != nullptr)
+      {
+        int16_t newY =  elem->position.y-SCROLL_SIZE;
+        this->updateElementPosition(elem, GUIElement::Vector2 { elem->position.x, newY});
+      }
+  }
+}
+
+void GUI::updateElementPosition(GUIElement* g, GUIElement::Vector2 newPos)
+{
+  if(g == nullptr)
+    return;
+
+  display->fillRect(g->position.x, g->position.y, g->size.x, g->size.y, BLACK);
+  display->display();
+
+  g->position = newPos;
+
+  if(g->type == GUIElement::Type::Text)
+    this->createText(static_cast<Text*>(g)); // safe, i checked type.
+// lol
+  // tbc
 }
 
 void GUI::init()
@@ -152,6 +192,6 @@ void GUI::init()
   display->setCursor(0,0);
   display->display();
 
-  Text t(std::string("GUI Initialized."), SSD1306_WHITE, Text::Vector2 {0, 0}, 2);
-  this->createText(&t);
+  Text* t = new Text(std::string("GUI Initialized."), SSD1306_WHITE, Text::Vector2 {0, 0}, 2);
+  this->createText(t);
 }

@@ -102,5 +102,5 @@ void loop() {
 // Serial.println(x);
   gui.updateControls(x,y,pressed);
   IndexMenu::loop();
-  delay(50);
+  delay(10);
 }

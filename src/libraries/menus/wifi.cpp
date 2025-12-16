@@ -16,9 +16,9 @@ void IndexMenu::WIFI()
     gui.destroyList();
 
     std::string str = std::string("Scanning...");
-    Text scanning = Text(str, SSD1306_WHITE, Text::Vector2 {SCREEN_WIDTH/2 - 6*str.size()/2, SCREEN_HEIGHT/2}, 1);
+    Text* scanning = new Text(str, SSD1306_WHITE, Text::Vector2 {SCREEN_WIDTH/2 - 6*str.size()/2, SCREEN_HEIGHT/2}, 1);
 
-    gui.createText(&scanning);   
+    gui.createText(scanning);   
     WiFi.scanNetworks(true);
 
     int n = WiFi.scanComplete();
