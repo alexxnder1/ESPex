@@ -73,7 +73,7 @@ void GUI::updateControls(uint16_t x, uint16_t y, bool pressed)
   if(x == 4095)
   {  
     if(this->previousFunction != nullptr)
-      this->previousFunction(this);
+      this->previousFunction();
     
     IndexMenu::scan = false;
   }

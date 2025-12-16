@@ -34,9 +34,6 @@ void IndexMenu::WIFI()
 
 void ScanWifi()
 {
-    if(gui == NULL)
-        return;
-
     networks_names.clear();
     for(int i =0; i < WiFi.scanComplete(); i++) {
         networks_names.push_back(std::string(WiFi.SSID(i).c_str()));
