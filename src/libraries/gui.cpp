@@ -82,7 +82,7 @@ void GUI::assignLastMenu(void (*m)())
   this->previousFunction = m;
 }
 
-void GUI::updateControls(uint16_t x, uint16_t y, bool pressed)
+void GUI::processControls(uint16_t x, uint16_t y, bool pressed)
 { 
   if(x == 4095)
   {  
@@ -151,10 +151,10 @@ void GUI::scrollDown()
 {
   for(int i = this->elements.size()-1; i >= 0; i--)
   {
-    if(this->elements[i] == nullptr)
-      continue;
+      if(this->elements[i] == nullptr)
+        continue;
 
-    GUIElement* elem = this->elements[i];
+      GUIElement* elem = this->elements[i];
       if(elem != nullptr)
       {
         int16_t newY =  elem->position.y-SCROLL_SIZE;
@@ -175,8 +175,6 @@ void GUI::updateElementPosition(GUIElement* g, GUIElement::Vector2 newPos)
 
   if(g->type == GUIElement::Type::Text)
     this->createText(static_cast<Text*>(g)); // safe, i checked type.
-// lol
-  // tbc
 }
 
 void GUI::init()

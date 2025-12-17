@@ -1,5 +1,4 @@
 #include <ArduinoJson.h>
-#include <WiFi.h>
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
 #include <Adafruit_Sensor.h>
@@ -10,19 +9,16 @@
 #include <string>
 #include <vector>
 
+#include "server.h"
+
 #include "defines.h"
 #include "libraries/list.h"
 #include "libraries/gui.h"
 #include "libraries/menus/index.h"
 
-const char* ssid = "ESP32 Server";
-AsyncWebServer server(80);
+AsyncWebServer aws(80);
 
-
-IPAddress localIP(192,168,4,1);
-IPAddress gateway(192,168,4,1);
-IPAddress subnet(255,255,255,0);
-
+LocalServer server(IPAddress(192,168,4,1), IPAddress(192,168,4,1), IPAddress(255,255,255,0));
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
@@ -32,8 +28,6 @@ void setup() {
   Serial.begin(115200);
   gui.init();
 
-  // pinMode(JOYSTICK_VRx, INPUT);
-  // pinMode(JOYSTICK_VRy, INPUT);
   pinMode(JOYSTICK_SW, INPUT_PULLUP);
 
   Serial.println("ESP32 Booted!");
@@ -41,12 +35,9 @@ void setup() {
     Serial.println("SPIFFS mount failed.");
     return;
   }
+  server.softAPInit();
 
-  WiFi.softAPConfig(localIP, gateway, subnet);
-  WiFi.softAP(ssid);
-  Serial.printf("Fixed AP IP address: %s", localIP.toString());
-
-  server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
+  aws.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
 
   gui.clear();
   IndexMenu::show();
@@ -72,35 +63,35 @@ void setup() {
   //     request->send(200, "text/plain", "Buzzed!");
   // });
 
-  server.on("/api/input", HTTP_POST,     [](AsyncWebServerRequest *request){
-        request->send(200, "application/json", "{\"status\":\"ok\"}");
-    },
-    NULL,
-    [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
+  // server.on("/api/input", HTTP_POST,     [](AsyncWebServerRequest *request){
+  //       request->send(200, "application/json", "{\"status\":\"ok\"}");
+  //   },
+  //   NULL,
+  //   [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
 
-        DynamicJsonDocument doc(256);
-        deserializeJson(doc, (const char*) data, len);
-        const char* text = doc["text"] | "NULL";
-        Serial.printf("POST body: %s", data);
+  //       DynamicJsonDocument doc(256);
+  //       deserializeJson(doc, (const char*) data, len);
+  //       const char* text = doc["text"] | "NULL";
+  //       Serial.printf("POST body: %s", data);
 
-        // display.clearDisplay();
-        // display.setTextSize(2);
-        // display.setTextColor(SSD1306_WHITE);
-        // display.setCursor(0,0);
-        // display.println(text);
-        // display.display();
-        // Serial.println(text);
-  });
+  //       // display.clearDisplay();
+  //       // display.setTextSize(2);
+  //       // display.setTextColor(SSD1306_WHITE);
+  //       // display.setCursor(0,0);
+  //       // display.println(text);
+  //       // display.display();
+  //       // Serial.println(text);
+  // });
 
-  server.begin();
+  aws.begin();
 }
+
 void loop() {
   uint16_t y = analogRead(JOYSTICK_VRx);
   uint16_t x = analogRead(JOYSTICK_VRy);
   bool pressed = digitalRead(JOYSTICK_SW) == 0;
 
-// Serial.println(x);
-  gui.updateControls(x,y,pressed);
+  gui.processControls(x,y,pressed);
   IndexMenu::loop();
   delay(10);
 }

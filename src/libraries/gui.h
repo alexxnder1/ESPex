@@ -24,7 +24,7 @@ class GUI {
         void init();
         void clear();
         void updateElementPosition(GUIElement* text, Text::Vector2 newPos);
-        void updateControls(uint16_t x, uint16_t y, bool pressed);
+        void processControls(uint16_t x, uint16_t y, bool pressed);
         void createText (Text* text);
         void showList (List* list);
         void destroyList ();
