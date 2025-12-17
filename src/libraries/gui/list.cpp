@@ -3,10 +3,10 @@
 
 List::List(std::string title, std::vector<std::string> menu, int m, int size)
 {
-    this->title = title;
-    this->options = menu;
-    this->selectedMenu = m;
-    this->textSize = size;
+  this->title = title;
+  this->options = menu;
+  this->selectedMenu = m;
+  this->textSize = size;
 }
 
 void List::selectDown()

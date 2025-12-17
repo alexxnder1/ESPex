@@ -1,15 +1,13 @@
 #pragma once
 #include <IPAddress.h>
 
-class LocalServer
+class WifiServer
 {
-    // tn
-    // asdasd
 public:
         IPAddress ip;
         IPAddress subnet;
         IPAddress gateway;
-    LocalServer(IPAddress ip, IPAddress gateway, IPAddress subnet);
+    WifiServer(IPAddress ip, IPAddress gateway, IPAddress subnet);
 
     void softAPInit();
 };

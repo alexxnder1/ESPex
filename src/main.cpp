@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "server.h"
+#include "wifi_server.h"
 
 #include "defines.h"
 #include "libraries/list.h"
@@ -18,7 +18,7 @@
 
 AsyncWebServer aws(80);
 
-LocalServer server(IPAddress(192,168,4,1), IPAddress(192,168,4,1), IPAddress(255,255,255,0));
+WifiServer server(IPAddress(192,168,4,1), IPAddress(192,168,4,1), IPAddress(255,255,255,0));
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
