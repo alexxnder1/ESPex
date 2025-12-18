@@ -1,5 +1,5 @@
 #include "gui_element.h"
-#include "libraries/gui.h"
+#include "libraries/gui/gui.h"
 
 extern GUI gui;
 

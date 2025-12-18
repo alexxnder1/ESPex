@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 
-#include "libraries/list.h"
-#include "libraries/gui.h"
+#include "libraries/gui/list.h"
+#include "libraries/gui/gui.h"
 #include "libraries/gui/text.h"
 
 class GUI {

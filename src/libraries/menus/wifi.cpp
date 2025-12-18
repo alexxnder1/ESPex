@@ -3,7 +3,7 @@
 #include <WiFi.h>
 #include "defines.h"
 #include "index.h"
-#include "libraries/gui.h"
+#include "libraries/gui/gui.h"
 #include "libraries/gui/text.h"
 
 std::vector<std::string> networks_names;

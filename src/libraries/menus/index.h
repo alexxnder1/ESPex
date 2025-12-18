@@ -1,5 +1,5 @@
 #pragma once
-#include "libraries/gui.h"
+#include "libraries/gui/gui.h"
 
 namespace IndexMenu
 {

@@ -1,8 +1,8 @@
 
 #include <vector>
 #include <string>
-#include "libraries/list.h"
-#include "libraries/gui.h"
+#include "libraries/gui/list.h"
+#include "libraries/gui/gui.h"
 
 #include "index.h"
 

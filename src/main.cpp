@@ -6,14 +6,15 @@
 #include <DHT_U.h>
 #include <Arduino.h>
 
+#include <Adafruit_SSD1306.h>
 #include <string>
 #include <vector>
 
 #include "wifi_server.h"
 
 #include "defines.h"
-#include "libraries/list.h"
-#include "libraries/gui.h"
+#include "libraries/gui/list.h"
+#include "libraries/gui/gui.h"
 #include "libraries/menus/index.h"
 
 AsyncWebServer aws(80);
@@ -40,6 +41,7 @@ void setup() {
   aws.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
 
   gui.clear();
+
   IndexMenu::show();
   gui.assignLastMenu(IndexMenu::show);
 
@@ -87,11 +89,11 @@ void setup() {
 }
 
 void loop() {
-  uint16_t y = analogRead(JOYSTICK_VRx);
-  uint16_t x = analogRead(JOYSTICK_VRy);
-  bool pressed = digitalRead(JOYSTICK_SW) == 0;
+  // uint16_t y = analogRead(JOYSTICK_VRx);
+  // uint16_t x = analogRead(JOYSTICK_VRy);
+  // bool pressed = digitalRead(JOYSTICK_SW) == 0;
 
-  gui.processControls(x,y,pressed);
-  IndexMenu::loop();
-  delay(10);
+  // gui.processControls(x,y,pressed);
+  // IndexMenu::loop();
+  // delay(10);
 }
