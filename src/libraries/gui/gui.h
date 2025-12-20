@@ -28,8 +28,7 @@ class GUI {
         void createText (Text* text);
         void showList (List* list);
         void destroyList ();
-        void scrollDown();
-        void scrollUp();
+        void scroll(bool b);
         void updateList ();
         ~GUI();
 

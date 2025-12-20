@@ -32,20 +32,18 @@ void IndexMenu::WIFI()
     scan = true;
 
 }
-
-
-
+// 6x8
 void ScanWifi()
 {
-    networks_names.clear();
+    networks->clearOptions();
+
     for(int i =0; i < WiFi.scanComplete(); i++) {
-        networks_names.push_back(std::string(WiFi.SSID(i).c_str()));
+        Text* t = new Text(std::string(WiFi.SSID(i).c_str()), WHITE, GUIElement::Vector2 { 0, 8*(gui.GlobalList->title->textSize+1)*i }, 1);
+        networks->options.push_back(t);
     }
-    networks->options = networks_names;
+
     if(networks->options.size() > 0)
     {
-        if(gui.GlobalList != networks)
-            gui.showList(networks);
         gui.updateList();
     }
 }
@@ -55,13 +53,13 @@ const unsigned long scanInterval = 8000;
 
 void IndexMenu::loop()
 {
-    if(!scan)
-        return;
+    // if(!scan)
+    //     return;
 
-    unsigned long currentMillis = millis();
-    if(currentMillis-previousMillis >= scanInterval)
-    {
-        previousMillis = millis();
-        ScanWifi();   
-    }
+    // unsigned long currentMillis = millis();
+    // if(currentMillis-previousMillis >= scanInterval)
+    // {
+    //     previousMillis = millis();
+    //     ScanWifi();   
+    // }
 }

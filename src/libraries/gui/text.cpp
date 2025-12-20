@@ -3,7 +3,7 @@
 #include "defines.h"
 #include <cmath>
 
-Text::Text(std::string t, uint16_t color, Text::Vector2 pos, int ts)
+Text::Text(const std::string& t, uint16_t color, Text::Vector2 pos, int ts)
 {
     this->c = color;
     this->text = t;

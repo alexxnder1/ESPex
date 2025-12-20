@@ -9,6 +9,6 @@ public:
     uint16_t c;
     int textSize;
     
-    Text(std::string t, uint16_t color, Text::Vector2 pos, int size);
+    Text(const std::string &t, uint16_t color, Text::Vector2 pos, int size);
     GUIElement::Vector2 CalculateSize();
 };

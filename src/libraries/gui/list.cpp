@@ -1,12 +1,53 @@
 #include "gui.h"
 #include "list.h"
+#include "defines.h"
+#include "text.h"
 
-List::List(std::string title, std::vector<std::string> menu, int m, int size)
+List::List(const std::string& titleStr, const std::vector<std::string>& menu, int m, int size)
 {
-  this->title = title;
-  this->options = menu;
+  Serial.begin(115200);
+
+  this->title = new Text(titleStr, WHITE,  Text::Vector2 { SCREEN_WIDTH/2-(6*size*titleStr.size())/2, 0}, 2);
+
+  int index=0;
+    Serial.println(menu.size());
+  Serial.println("LOOOL");
+
+  for(const std::string &item : menu)
+  {
+    std::string lbl = (std::string("* ") + item);
+    std::string label = m == index ? lbl : item;
+  //   // Serial.println("[LIST**]")
+    
+    Serial.println(label.c_str());
+    Text* tm = new Text(label, SSD1306_WHITE, Text::Vector2 { static_cast<int16_t>(0), static_cast<int16_t>(16+6+size*8*index)}, size);
+    this->options.push_back(tm);
+    index++;
+  }  
+
   this->selectedMenu = m;
   this->textSize = size;
+}
+// asds
+
+void List::clearOptions()
+{
+  for(Text* opt : this->options)
+  {
+    if(opt != nullptr)
+    {
+      delete opt;
+      opt = nullptr;
+    }
+  }
+
+  this->options.clear();
+}
+
+List::~List()
+{
+  delete this->title;
+  this->clearOptions();
 }
 
 void List::selectDown()

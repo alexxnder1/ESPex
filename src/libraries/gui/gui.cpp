@@ -8,6 +8,7 @@
 GUI::GUI(Adafruit_SSD1306* disp)
 {
     display = disp;
+    display->setTextWrap(false);
 }
 
 // creating text
@@ -25,7 +26,6 @@ void GUI::createText(Text* text)
 void GUI::clear()
 {
   display->clearDisplay();
-  display->display();
   for(GUIElement* elem : this->elements)
       delete elem;
 
@@ -37,37 +37,38 @@ void GUI::clear()
 void GUI::destroyList()
 {
   if(this->GlobalList != nullptr)
-  {
+  { 
+    delete this->GlobalList;
     this->GlobalList = nullptr;
-    this->clear();
-    // this->GlobalList->sele
   }
-}
 
+}
+// lol
 void GUI::showList(List* list)
 {
-  this->destroyList();
+  // this->destroyList();
   this->GlobalList = list;
-  updateList();
+  this->updateList();
 }
 
 
 void GUI::updateList()
 {
-  this->clear();
-  Text* title = new Text(this->GlobalList->title, SSD1306_WHITE, Text::Vector2 { SCREEN_WIDTH/2-(12*this->GlobalList->title.size())/2, 0}, 2);
-  this->createText(title);
+  display->clearDisplay();
 
-  Serial.println(this->GlobalList->title.c_str());
-  int index=0;
-  for(const auto& item : this->GlobalList->options)
+  if(this->GlobalList!=nullptr)
   {
-    Text* option = new Text(this->GlobalList->selectedMenu == index ? (std::string("* ") + item).c_str() : item.c_str(), SSD1306_WHITE, Text::Vector2 { static_cast<int16_t>(0), static_cast<int16_t>(16+6+this->GlobalList->textSize*8*index)}, this->GlobalList->textSize);
-    this->createText(option);
-    index++;
+    this->createText(this->GlobalList->title);
+
+    for(Text* item : this->GlobalList->options)
+    {
+      Serial.println(item->text.c_str());
+      this->createText(item);
+    }
   }
   
 }
+// asdasd
 
 GUI::~GUI()
 {
@@ -102,7 +103,7 @@ void GUI::processControls(uint16_t x, uint16_t y, bool pressed)
   {
     if(this->GlobalList == nullptr)
     {
-      this->scrollUp();
+      this->scroll(true);
     }
     else {
       this->GlobalList->selectUp();
@@ -114,7 +115,7 @@ void GUI::processControls(uint16_t x, uint16_t y, bool pressed)
   {
     if(this->GlobalList == nullptr)
     {
-      this->scrollDown();
+      this->scroll(false);
     }
     else {
       this->GlobalList->selectDown();
@@ -131,8 +132,10 @@ void GUI::processControls(uint16_t x, uint16_t y, bool pressed)
 }
 #define SCROLL_SIZE 16
 
-void GUI::scrollUp()
+void GUI::scroll(bool b)
 {
+  display->clearDisplay();
+  
   for(int i = 0; i <= this->elements.size()-1; i++)
   {
     if(this->elements[i] == nullptr)
@@ -141,27 +144,18 @@ void GUI::scrollUp()
       GUIElement* elem = this->elements[i];
       if(elem != nullptr)
       {
-        int16_t newY =  elem->position.y+SCROLL_SIZE;
-        this->updateElementPosition(elem, GUIElement::Vector2 { elem->position.x, newY});
+        // int16_t newY =  elem->position.y+SCROLL_SIZE;
+        elem->position.y += (b ? 1 : -1) *SCROLL_SIZE;
+        if(elem->type == GUIElement::Type::Text)
+          this->createText(static_cast<Text*>(elem)); // safe, i checked type.
+
+        // this->updateElementPosition(elem, GUIElement::Vector2 { elem->position.x, newY});
       }
   }
+
+  display->display();
 }
 
-void GUI::scrollDown()
-{
-  for(int i = this->elements.size()-1; i >= 0; i--)
-  {
-      if(this->elements[i] == nullptr)
-        continue;
-
-      GUIElement* elem = this->elements[i];
-      if(elem != nullptr)
-      {
-        int16_t newY =  elem->position.y-SCROLL_SIZE;
-        this->updateElementPosition(elem, GUIElement::Vector2 { elem->position.x, newY});
-      }
-  }
-}
 
 void GUI::updateElementPosition(GUIElement* g, GUIElement::Vector2 newPos)
 {
@@ -169,7 +163,7 @@ void GUI::updateElementPosition(GUIElement* g, GUIElement::Vector2 newPos)
     return;
 
   display->fillRect(g->position.x, g->position.y, g->size.x, g->size.y, BLACK);
-  display->display();
+  // display->display();
 
   g->position = newPos;
 
