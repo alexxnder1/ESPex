@@ -49,16 +49,29 @@ List::~List()
   delete this->title;
   this->clearOptions();
 }
-
+void removeAllOccurrences(std::string& str, const std::string& seq) {
+    size_t pos = 0;
+    while ((pos = str.find(seq, pos)) != std::string::npos) {
+        str.erase(pos, seq.length());
+    }
+}
 void List::selectDown()
 {
+  removeAllOccurrences(this->options[this->selectedMenu]->text, "* ");
+
   this->selectedMenu++;
   if(this->selectedMenu >= this->options.size())
     this->selectedMenu = 0;
+
+  this->options[this->selectedMenu]->text.insert(0, "* ");
 }
 void List::selectUp()
 {
+  removeAllOccurrences(this->options[this->selectedMenu]->text, "* ");
+
   this->selectedMenu--;
   if(this->selectedMenu < 0)
     this->selectedMenu = this->options.size()-1;
+
+  this->options[this->selectedMenu]->text.insert(0, "* ");
 }

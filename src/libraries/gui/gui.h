@@ -27,7 +27,6 @@ class GUI {
         void processControls(uint16_t x, uint16_t y, bool pressed);
         void createText (Text* text);
         void showList (List* list);
-        void destroyList ();
         void scroll(bool b);
         void updateList ();
         ~GUI();

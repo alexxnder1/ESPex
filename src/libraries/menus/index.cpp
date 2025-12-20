@@ -32,6 +32,8 @@ WiFi.scanDelete();
 
 void IndexMenu::BT()
 {
+    gui.clear();
+
 Serial.println("bt");
 }
 
@@ -60,7 +62,7 @@ void IndexMenu::About()
     esp_chip_info(&chipInfo);
 
 // asd
-    gui.destroyList();
+    gui.clear();
 
     Text* about = new Text (std::string("About"),  SSD1306_WHITE, Text::Vector2 { 0,0 }, 2);
     Text* device = new Text(std::string("Device: ") + getDeviceName(chipInfo.model), SSD1306_WHITE, Text::Vector2 { 0, 8*4}, 1);

@@ -25,27 +25,25 @@ void GUI::createText(Text* text)
 
 void GUI::clear()
 {
-  display->clearDisplay();
+  this->GlobalList = nullptr;
+
+  if(display != nullptr)
+    display->clearDisplay();
+
   for(GUIElement* elem : this->elements)
-      delete elem;
-
-  this->elements.clear();
-  // this->texts.clear();
-}
-
-// ters
-void GUI::destroyList()
-{
-  if(this->GlobalList != nullptr)
-  { 
-    delete this->GlobalList;
-    this->GlobalList = nullptr;
+  {
+      // if(elem != nullptr)
+      //   delete elem;
+      
+      elem = nullptr;
   }
 
+  this->elements.clear();
 }
-// lol
+
 void GUI::showList(List* list)
 {
+  this->clear();
   // this->destroyList();
   this->GlobalList = list;
   this->updateList();

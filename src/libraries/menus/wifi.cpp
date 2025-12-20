@@ -13,7 +13,7 @@ extern GUI gui;
 
 void IndexMenu::WIFI()
 {
-    gui.destroyList();
+    gui.clear();
 
     std::string str = std::string("Scanning...");
     Text* scanning = new Text(str, SSD1306_WHITE, Text::Vector2 {SCREEN_WIDTH/2 - 6*str.size()/2, SCREEN_HEIGHT/2}, 1);

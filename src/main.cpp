@@ -40,8 +40,6 @@ void setup() {
 
   aws.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
 
-  gui.clear();
-
   IndexMenu::show();
   gui.assignLastMenu(IndexMenu::show);
   aws.begin();
