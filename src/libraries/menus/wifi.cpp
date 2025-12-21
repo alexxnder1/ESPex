@@ -7,7 +7,7 @@
 #include "libraries/gui/text.h"
 
 std::vector<std::string> networks_names;
-List* networks = new List(std::string("WiFis"), networks_names, 0, 1);
+List networks(std::string("Wifis"), networks_names, 0, 1);
 
 extern GUI gui;
 
@@ -28,23 +28,27 @@ void IndexMenu::WIFI()
         Serial.println("Rescanning...");
     }
 
-    // _gui.showList(networks);
+    gui.showList(&networks);
     scan = true;
 
 }
 // 6x8
 void ScanWifi()
 {
-    networks->clearOptions();
+    networks.clearOptions();
+    Serial.println("network-s>clearOptions");
 
     for(int i =0; i < WiFi.scanComplete(); i++) {
-        Text* t = new Text(std::string(WiFi.SSID(i).c_str()), WHITE, GUIElement::Vector2 { 0, 8*(gui.GlobalList->title->textSize+1)*i }, 1);
-        networks->options.push_back(t);
+        Text* t = new Text(std::string(WiFi.SSID(i).c_str()), WHITE, GUIElement::Vector2 { 0, 8*2*(gui.GlobalList->title->textSize)*(i+1) }, 1);
+        networks.options.push_back(t);
     }
 
-    if(networks->options.size() > 0)
+    if(networks.options.size() > 0)
     {
         gui.updateList();
+
+    Serial.println("gui.updatelist after");
+
     }
 }
 
@@ -53,13 +57,13 @@ const unsigned long scanInterval = 8000;
 
 void IndexMenu::loop()
 {
-    // if(!scan)
-    //     return;
+    if(!scan)
+        return;
 
-    // unsigned long currentMillis = millis();
-    // if(currentMillis-previousMillis >= scanInterval)
-    // {
-    //     previousMillis = millis();
-    //     ScanWifi();   
-    // }
+    unsigned long currentMillis = millis();
+    if(currentMillis-previousMillis >= scanInterval)
+    {
+        previousMillis = millis();
+        ScanWifi();   
+    }
 }

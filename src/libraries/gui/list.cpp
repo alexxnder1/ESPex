@@ -7,7 +7,7 @@ List::List(const std::string& titleStr, const std::vector<std::string>& menu, in
 {
   Serial.begin(115200);
 
-  this->title = new Text(titleStr, WHITE,  Text::Vector2 { SCREEN_WIDTH/2-(6*size*titleStr.size())/2, 0}, 2);
+  this->title = new Text(titleStr, WHITE,  Text::Vector2 { SCREEN_WIDTH/2-(6*2*titleStr.size())/2, 0}, 2);
 
   int index=0;
 
@@ -16,7 +16,7 @@ List::List(const std::string& titleStr, const std::vector<std::string>& menu, in
     std::string lbl = (std::string("* ") + item);
     std::string label = m == index ? lbl : item;
     
-    Text* tm = new Text(label, SSD1306_WHITE, Text::Vector2 { static_cast<int16_t>(0), static_cast<int16_t>(16+6+size*8*index)}, size);
+    Text* tm = new Text(label, SSD1306_WHITE, Text::Vector2 { static_cast<int16_t>(0), static_cast<int16_t>(8*2 + 6*size + size*8*index)}, size);
     this->options.push_back(tm);
     index++;
   }  
