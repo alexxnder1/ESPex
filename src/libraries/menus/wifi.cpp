@@ -38,17 +38,12 @@ void ScanWifi()
     networks.clearOptions();
     Serial.println("network-s>clearOptions");
 
-    for(int i =0; i < WiFi.scanComplete(); i++) {
-        Text* t = new Text(std::string(WiFi.SSID(i).c_str()), WHITE, GUIElement::Vector2 { 0, 8*2*(gui.GlobalList->title->textSize)*(i+1) }, 1);
-        networks.options.push_back(t);
-    }
+    for(int i =0; i < WiFi.scanComplete(); i++) 
+        gui.GlobalList->AddOption(std::string(WiFi.SSID(i).c_str()));
 
     if(networks.options.size() > 0)
     {
         gui.updateList();
-
-    Serial.println("gui.updatelist after");
-
     }
 }
 

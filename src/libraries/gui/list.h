@@ -19,5 +19,6 @@ class List {
         void selectUp();
         void selectDown();
         void clearOptions();
+        void AddOption(std::string opt);
         ~List();
 };

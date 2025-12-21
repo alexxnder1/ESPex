@@ -8,21 +8,12 @@ List::List(const std::string& titleStr, const std::vector<std::string>& menu, in
   Serial.begin(115200);
 
   this->title = new Text(titleStr, WHITE,  Text::Vector2 { SCREEN_WIDTH/2-(6*2*titleStr.size())/2, 0}, 2);
-
-  int index=0;
-
-  for(const std::string &item : menu)
-  {
-    std::string lbl = (std::string("* ") + item);
-    std::string label = m == index ? lbl : item;
-    
-    Text* tm = new Text(label, SSD1306_WHITE, Text::Vector2 { static_cast<int16_t>(0), static_cast<int16_t>(8*2 + 6*size + size*8*index)}, size);
-    this->options.push_back(tm);
-    index++;
-  }  
-
   this->selectedMenu = m;
   this->textSize = size;
+
+  for(const std::string &item : menu)
+    this->AddOption(item);
+
 }
 // asds
 
@@ -38,6 +29,16 @@ void List::clearOptions()
   }
 
   this->options.clear();
+}
+
+void List::AddOption(std::string item)
+{
+  int index = this->options.size();
+  std::string lbl = (std::string("* ") + item);
+  std::string label = this->selectedMenu == index ? lbl : item;
+  
+  Text* tm = new Text(label, SSD1306_WHITE, Text::Vector2 { static_cast<int16_t>(0), static_cast<int16_t>(8*2 + 6*this->textSize + this->textSize*8*index)}, this->textSize);
+  this->options.push_back(tm);
 }
 
 List::~List()
