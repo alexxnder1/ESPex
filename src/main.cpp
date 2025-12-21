@@ -7,6 +7,7 @@
 #include "wifi_server.h"
 
 #include "defines.h"
+#include <WiFi.h>
 #include "libraries/gui/list.h"
 #include "libraries/gui/gui.h"
 #include "libraries/menus/index.h"
@@ -22,7 +23,6 @@ void setup() {
   Serial.begin(115200);
   gui.init();
 
-  Bluetooth::Init();
   pinMode(JOYSTICK_SW, INPUT_PULLUP);
 
   Serial.println("ESP32 Booted!");

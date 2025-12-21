@@ -22,19 +22,12 @@ void IndexMenu::show()
     mainList.functions.push_back(About);   
 }
 
-
-/*
-WiFi.scanDelete();
-    WiFi.scanNetworks(false);
-    
-
-*/
+#include "bluetooth.h"
 
 void IndexMenu::BT()
 {
-    gui.clear();
-
-Serial.println("bt");
+    // gui.clear();
+    Bluetooth::Init();
 }
 
 

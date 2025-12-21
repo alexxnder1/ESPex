@@ -16,6 +16,7 @@ WifiServer::WifiServer(IPAddress ip, IPAddress gateway, IPAddress subnet)
 
 void WifiServer::softAPInit()
 {
+  // WiFi.mode(WIFI_OFF);
   WiFi.softAPConfig(this->ip,this->gateway,this->subnet);
   WiFi.softAP(ssid);
   Serial.printf("IP address: %s", this->ip.toString());
