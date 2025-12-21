@@ -52,5 +52,5 @@ void loop() {
 
   gui.processControls(x,y,pressed);
   IndexMenu::loop();
-  delay(10);
+  delay(100);
 }

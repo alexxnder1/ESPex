@@ -19,8 +19,6 @@ void GUI::createText(Text* text)
   display->setCursor(text->position.x, text->position.y);
   display->println(text->text.c_str());
   display->display();
-
-  Serial.println(text->text.c_str());
 }
 
 void GUI::clear()
@@ -60,7 +58,6 @@ void GUI::updateList()
 
     for(Text* item : this->GlobalList->options)
     {
-      Serial.println(item->text.c_str());
       this->createText(item);
     }
   }
