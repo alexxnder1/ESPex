@@ -2,6 +2,9 @@
 #include "text.h"
 #include "defines.h"
 #include <cmath>
+#include "gui.h"
+
+extern GUI gui;
 
 Text::Text(const std::string& t, uint16_t color, Text::Vector2 pos, int ts)
 {
@@ -27,4 +30,15 @@ GUIElement::Vector2 Text::CalculateSize()
         y+=lineHeight*wrapLines;
         
     return { x, y };
+}
+
+Text::Vector2 Text::GetCenterCoordinates()
+{
+    int16_t x1, y1;
+    uint16_t w, h;
+    
+    gui.display->setTextSize(this->textSize);
+    gui.display->getTextBounds(this->text.c_str(), 0, 0, &x1, &y1, &w, &h);
+    
+    return Text::Vector2 {(SCREEN_WIDTH  - w) / 2,(SCREEN_HEIGHT - h) / 2};
 }

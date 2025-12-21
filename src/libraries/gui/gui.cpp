@@ -8,7 +8,6 @@
 GUI::GUI(Adafruit_SSD1306* disp)
 {
     display = disp;
-    display->setTextWrap(false);
 }
 
 // creating text

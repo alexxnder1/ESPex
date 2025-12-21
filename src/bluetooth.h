@@ -1,9 +1,10 @@
 #pragma once
-#include "BluetoothSerial.h"
+#include <BleKeyboard.h>
 #include <Arduino.h>
 
 namespace Bluetooth {
-    extern BluetoothSerial ble;
+    extern BleKeyboard ble;
     void Init();
     void Loop();
+    void OnConnect();
 }

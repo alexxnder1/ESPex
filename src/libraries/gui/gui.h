@@ -11,10 +11,8 @@
 
 class GUI {
     
-    private:
-        Adafruit_SSD1306* display;
-
     public:
+        Adafruit_SSD1306* display;
         void (*previousFunction)();
         void assignLastMenu(void (*m)());
 

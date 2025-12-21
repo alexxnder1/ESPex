@@ -4,15 +4,19 @@
 #include "bluetooth.h"
 #include <BleKeyboard.h>
 
-#include "BluetoothSerial.h"
 #include "libraries/gui/list.h"
 #include "libraries/gui/gui.h"
 
+#include "libraries/gui/gui_element.h"
+#include "libraries/gui/text.h"
+#include "defines.h"
+#include "libraries/gui/list.h"
+
 std::vector<std::string> devices;
-List btList("BT", devices, 0, 1);
 
 extern GUI gui;
 
+List btList("BT Action", { "Shutdown", "Restart", "Chaos", "Etc1", "Etc2", "Etc3" }, 0, 2);
 
 // private scope (only in this file)
 namespace {
@@ -20,56 +24,63 @@ namespace {
     unsigned long previousMillis_ = 0;
 
     const unsigned long scanInterval = 5000;
+
+    bool onConnectFired = false;
 }
 
-int scanTime = 2;
-
-bool INIT = false;
-
-
 namespace Bluetooth {
-    BluetoothSerial serialBT;
+    BleKeyboard bk("ESP32_BK", "Dev software solutions", 100);
 
-    void Init() {
-        if(!serialBT.begin("ESP32_Scanner"))
-        {
-            Serial.println("[SerialBT] Init failed.");
-            return;
-        }
+    void Init()
+    {
+        gui.clear();
+
+        Text* t = new Text(std::string("Waiting for BLE Connection..."), WHITE, GUIElement::Vector2{0,0}, 1);
+        t->position = t->GetCenterCoordinates();
+
+        gui.createText(t);  
         
-        Serial.println("[SerialBT] Init was successfully.");
-        gui.showList(&btList);
+        Serial.println("[Bluetooth] Starting BLE Keyboard...");
 
-        serialBT.discoverAsync([](BTAdvertisedDevice *device) {
-            Serial.print("Name: ");
-            Serial.print(device->getName().c_str());
-            Serial.print(" | Address: ");
-            Serial.println(device->getAddress().toString().c_str());
-
-            btList.AddOption(device->getName());
-            gui.updateList();
-        });
-        
-        INIT = true;
+        bk.begin();
     }
 
-    void Loop() {
-        if (!INIT) return;
+    void OnConnect()
+    {
+        onConnectFired=true;
+        gui.clear();
+        
+        Text* ble_connected = new Text(std::string("BLE Connected."), WHITE, GUIElement::Vector2{0,0}, 1);
+        ble_connected->position = ble_connected->GetCenterCoordinates();
+        gui.createText(ble_connected);  
 
+        delay(1500);
+        gui.clear();
+
+        gui.showList(&btList);
+        // lista
+    }
+    
+    void Loop()
+    {
         unsigned long currentMillis = millis();
-        if (currentMillis - previousMillis >= scanInterval) {
+        if(currentMillis-previousMillis >= scanInterval)
+        {
             previousMillis = millis();
+   
+            if (bk.isConnected()) {
+                if(!onConnectFired)
+                    Bluetooth::OnConnect();
 
-            // serialBT.discoverAsyncStop();
-            // Serial.println("Scan stopped.");
-            // if (bk.isConnected()) {
-            //     Serial.println("[Bluetooth] Client connected, sending keys...");
-            //     bk.press(KEY_LEFT_GUI);
-            //     bk.press('r');
-            //     bk.releaseAll();
-            //     delay(500);
-            //     bk.print("Hello from ESP32 BLE Keyboard!");
-            // }
+                // Serial.println("[Bluetooth] Client connected, sending keys...");
+
+                // bk.press(KEY_LEFT_GUI);
+                // bk.press('r');
+                // bk.releaseAll();
+
+                // delay(500);
+                // bk.print("Hello from ESP32 BLE Keyboard!");
+            }
         }
     }
 }
