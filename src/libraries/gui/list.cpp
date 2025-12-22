@@ -6,11 +6,13 @@
 
 extern GUI gui;
 
-List::List(const std::string& titleStr, const std::vector<std::string>& menu, int m, int size)
+List::List(const std::string& titleStr, const std::vector<std::string>& menu, int textSize, std::vector<void (*)()> f, void(*onExit)())
 {
   this->title = new Text(titleStr, WHITE,  Text::Vector2 { SCREEN_WIDTH/2-(6*2*titleStr.size())/2, 0}, 2);
-  this->selectedMenu = m;
-  this->textSize = size;
+  this->selectedMenu = 0;
+  this->textSize = textSize;
+  this->functions = f;
+  this->onExit = onExit;
 
   for(const std::string &item : menu)
     this->AddOption(item);
@@ -58,15 +60,19 @@ void List::AddOption(std::string item)
 
 List::~List()
 {
-  delete this->title;
   this->clearOptions();
+  
+  if(this->onExit != nullptr)
+    this->onExit();
 }
+
 void removeAllOccurrences(std::string& str, const std::string& seq) {
     size_t pos = 0;
     while ((pos = str.find(seq, pos)) != std::string::npos) {
         str.erase(pos, seq.length());
     }
 }
+
 void List::selectDown()
 {
   removeAllOccurrences(this->options[this->selectedMenu]->text, "* ");

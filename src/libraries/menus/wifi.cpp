@@ -7,13 +7,21 @@
 #include "libraries/gui/text.h"
 
 std::vector<std::string> networks_names;
-List networks(std::string("Wifis"), networks_names, 0, 1);
+List* networksList;
 
 extern GUI gui;
+
+void onWifiExit()
+{
+    gui.clear();
+    WiFi.scanNetworks(false);
+    IndexMenu::scan = false;
+}
 
 void IndexMenu::WIFI()
 {
     gui.clear();
+    networksList = new List(std::string("Wifis"), networks_names, 1, {}, onWifiExit);
 
     std::string str = std::string("Scanning...");
     Text* scanning = new Text(str, SSD1306_WHITE, Text::Vector2 {SCREEN_WIDTH/2 - 6*str.size()/2, SCREEN_HEIGHT/2}, 1);
@@ -21,31 +29,26 @@ void IndexMenu::WIFI()
     gui.createText(scanning);   
     WiFi.scanNetworks(true);
 
-    int n = WiFi.scanComplete();
-    while(n == WIFI_SCAN_RUNNING)
-    {
-        n = WiFi.scanComplete();
-        Serial.println("Rescanning...");
-    }
-
-    gui.showList(&networks);
     scan = true;
-
 }
+
 // 6x8
 void ScanWifi()
 {
-    networks.clearOptions();
+    networksList->clearOptions();
     Serial.println("network-s>clearOptions");
 
     for(int i =0; i < WiFi.scanComplete(); i++) 
     {
-        gui.GlobalList->AddOption(std::string(WiFi.SSID(i).c_str()));
+        networksList->AddOption(std::string(WiFi.SSID(i).c_str()));
     }
 
-    if(networks.options.size() > 0)
+    if(networksList->options.size() > 0)
     {
-        gui.updateList();
+        if(gui.GlobalList != networksList)
+            gui.showList(networksList);
+
+        else gui.updateList();
     }
 }
 

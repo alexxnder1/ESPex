@@ -6,14 +6,15 @@
 
 class List {
     public:
-        List(const std::string& title, const  std::vector<std::string>& options, int selectedMenu, int size=2);
+        List(const std::string& titleStr, const std::vector<std::string>& menu, int textSize, std::vector<void (*)()> f, void (*oe)()=nullptr);
 
         Text* title=nullptr;
         
         std::vector<Text*> options;
         
+        void (*onExit)() = nullptr;
         std::vector<void (*)()> functions;
-        int textSize = 1;
+        int textSize;
         
         int selectedMenu = 0;
         void selectUp();

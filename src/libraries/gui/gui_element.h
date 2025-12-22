@@ -9,11 +9,12 @@ public:
         int16_t  x;
         int16_t  y;
     };
-    virtual ~GUIElement() = default;
     Type type;
     Vector2 position;
     Vector2 size;    
 
 protected:
     GUIElement();
+    ~GUIElement();
+
 };

@@ -42,10 +42,15 @@ void GUI::clear()
   this->elements.clear();
 }
 
-void GUI::showList(List& list)
+void GUI::showList(List* list)
 {
+  if(this->GlobalList != nullptr)
+  {
+    delete this->GlobalList;
+    this->GlobalList = nullptr;
+  }
+
   this->clear();
-  // this->destroyList();
   this->GlobalList = list;
   this->updateList();
 }
@@ -70,10 +75,10 @@ void GUI::updateList()
 
 GUI::~GUI()
 {
-  for(GUIElement* elem : this->elements)
-      delete elem;
+  // for(GUIElement* elem : this->elements)
+  //     delete elem;
 
-  this->elements.clear();
+  // this->elements.clear();
 }
 
 void GUI::assignLastMenu(void (*m)())

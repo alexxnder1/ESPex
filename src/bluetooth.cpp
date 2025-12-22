@@ -12,11 +12,18 @@
 #include "defines.h"
 #include "libraries/gui/list.h"
 
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEServer.h>
+#include "BLE2902.h"
+#include "BLEHIDDevice.h"
+
+
+List* btList;
 std::vector<std::string> devices;
 
 extern GUI gui;
 
-List btList("BT Action", { "Shutdown", "Restart", "Chaos", "Etc1", "Etc2", "Etc3" }, 0, 2);
 
 // private scope (only in this file)
 namespace {
@@ -37,7 +44,6 @@ namespace Bluetooth {
 
         Text* t = new Text(std::string("Waiting for BLE Connection..."), WHITE, GUIElement::Vector2{0,0}, 1);
         t->position = t->GetCenterCoordinates();
-
         gui.createText(t);  
         
         Serial.println("[Bluetooth] Starting BLE Keyboard...");
@@ -45,22 +51,43 @@ namespace Bluetooth {
         bk.begin();
     }
 
+    void onExit()
+    {
+        Serial.println("[Bluetooth] Stopping BLE Keyboard...");
+        gui.clear();
+
+        Text* t = new Text(std::string("Quiting..."), WHITE, GUIElement::Vector2{0,0}, 1);
+        t->position = t->GetCenterCoordinates();
+        gui.createText(t);  
+
+        gui.clear();
+
+        // stopping BLE
+        bk.end();
+        BLEDevice::stopAdvertising();
+        BLEDevice::deinit();
+           
+        onConnectFired=false;
+    }
+
     void OnConnect()
     {
-        onConnectFired=true;
         gui.clear();
+        onConnectFired=true;
         
+        btList = new List("BT Action", { "Shutdown", "Restart", "Chaos", "Etc1", "Etc2", "Etc3" }, 2,  {}, onExit);
+
         Text* ble_connected = new Text(std::string("BLE Connected."), WHITE, GUIElement::Vector2{0,0}, 1);
         ble_connected->position = ble_connected->GetCenterCoordinates();
         gui.createText(ble_connected);  
 
         delay(1500);
-        gui.clear();
-
-        gui.showList(&btList);
-        // lista
+        // safe check (if user exits while waiting)
+        if (bk.isConnected() && BLEDevice::getInitialized()) 
+            gui.showList(btList);
     }
     
+
     void Loop()
     {
         unsigned long currentMillis = millis();
@@ -68,7 +95,7 @@ namespace Bluetooth {
         {
             previousMillis = millis();
    
-            if (bk.isConnected()) {
+            if (bk.isConnected() && BLEDevice::getInitialized()) {
                 if(!onConnectFired)
                     Bluetooth::OnConnect();
 

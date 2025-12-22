@@ -9,17 +9,14 @@
 #include <Arduino.h>
 #include "esp_system.h"
 
-std::vector<std::string> menu = {"WiFi", "BT", "About"};
-List mainList(std::string("Menu"), menu, 0);
+List* mainList;
 
 extern GUI gui;
 
 void IndexMenu::show()
 {
-    gui.showList(&mainList);
-    mainList.functions.push_back(WIFI);
-    mainList.functions.push_back(BT);
-    mainList.functions.push_back(About);   
+    mainList = new List(std::string("Menu"), {"WiFi", "BT", "About"}, 2, {WIFI, BT, About});
+    gui.showList(mainList);
 }
 
 #include "bluetooth.h"
