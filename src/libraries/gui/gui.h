@@ -21,7 +21,6 @@ class GUI {
         GUI(Adafruit_SSD1306* disp);
         void init();
         void clear();
-        void updateElementPosition(GUIElement* text, Text::Vector2 newPos);
         void processControls(uint16_t x, uint16_t y, bool pressed);
         void createText (Text* text);
         void showList (List* list);

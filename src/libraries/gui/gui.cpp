@@ -161,20 +161,6 @@ void GUI::scroll(bool b)
 }
 
 
-void GUI::updateElementPosition(GUIElement* g, GUIElement::Vector2 newPos)
-{
-  if(g == nullptr)
-    return;
-
-  display->fillRect(g->position.x, g->position.y, g->size.x, g->size.y, BLACK);
-  // display->display();
-
-  g->position = newPos;
-
-  if(g->type == GUIElement::Type::Text)
-    this->createText(static_cast<Text*>(g)); // safe, i checked type.
-}
-
 void GUI::init()
 {
   Wire.begin(21, 22);
@@ -188,6 +174,5 @@ void GUI::init()
   display->setCursor(0,0);
   display->display();
 
-  Text* t = new Text(std::string("GUI Initialized."), SSD1306_WHITE, Text::Vector2 {0, 0}, 2);
-  this->createText(t);
+  Serial.println("[GUI] Init.");
 }

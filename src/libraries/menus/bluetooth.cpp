@@ -69,13 +69,43 @@ namespace Bluetooth {
            
         onConnectFired=false;
     }
+    
+    void Shutdown()
+    {
+        Serial.println("[Bluetooth] Shutdown executed.");
+
+        // bk.releaseAll();
+        bk.press(KEY_LEFT_GUI);
+        bk.press('r');
+        bk.releaseAll();
+        
+        delay(500);
+
+        bk.print("cmd");
+        bk.write(KEY_RETURN);
+        delay(500);
+
+        bk.print("shutdown /s /t 0");
+        bk.write(KEY_RETURN);
+    }
+
+    void Restart()
+    {
+
+    }
+
+    void Chaos()
+    {
+
+    }
+    
 
     void OnConnect()
     {
         gui.clear();
         onConnectFired=true;
         
-        btList = new List("BT Action", { "Shutdown", "Restart", "Chaos", "Etc1", "Etc2", "Etc3" }, 2,  {}, onExit);
+        btList = new List("BT Action", { "Shutdown", "Restart", "Chaos", "Etc1", "Etc2", "Etc3" }, 1, {Shutdown}, onExit);
 
         Text* ble_connected = new Text(std::string("BLE Connected."), WHITE, GUIElement::Vector2{0,0}, 1);
         ble_connected->position = ble_connected->GetCenterCoordinates();
@@ -86,7 +116,6 @@ namespace Bluetooth {
         if (bk.isConnected() && BLEDevice::getInitialized()) 
             gui.showList(btList);
     }
-    
 
     void Loop()
     {
@@ -95,19 +124,9 @@ namespace Bluetooth {
         {
             previousMillis = millis();
    
-            if (bk.isConnected() && BLEDevice::getInitialized()) {
+            if (bk.isConnected() && BLEDevice::getInitialized()) 
                 if(!onConnectFired)
                     Bluetooth::OnConnect();
-
-                // Serial.println("[Bluetooth] Client connected, sending keys...");
-
-                // bk.press(KEY_LEFT_GUI);
-                // bk.press('r');
-                // bk.releaseAll();
-
-                // delay(500);
-                // bk.print("Hello from ESP32 BLE Keyboard!");
-            }
         }
     }
 }

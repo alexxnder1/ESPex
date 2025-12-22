@@ -54,7 +54,7 @@ void List::AddOption(std::string item)
   
   */
   // if(index >0)
-  Text* tm = new Text(label, SSD1306_WHITE, Text::Vector2 { static_cast<int16_t>(0), static_cast<int16_t>(8*2 + this->textSize*4 + this->textSize*8*index)}, this->textSize);
+  Text* tm = new Text(label, SSD1306_WHITE, Text::Vector2 { static_cast<int16_t>(0), static_cast<int16_t>((index > 0 ? this->textSize*4*index : 0) +  8*2 + this->textSize*4 + this->textSize*8*index)}, this->textSize);
   this->options.push_back(tm);
 }
 
