@@ -2,18 +2,18 @@
 #include "list.h"
 #include "defines.h"
 #include "text.h"
+#include "gui.h"
+
+extern GUI gui;
 
 List::List(const std::string& titleStr, const std::vector<std::string>& menu, int m, int size)
 {
-  Serial.begin(115200);
-
   this->title = new Text(titleStr, WHITE,  Text::Vector2 { SCREEN_WIDTH/2-(6*2*titleStr.size())/2, 0}, 2);
   this->selectedMenu = m;
   this->textSize = size;
 
   for(const std::string &item : menu)
     this->AddOption(item);
-
 }
 // asds
 
@@ -37,7 +37,22 @@ void List::AddOption(std::string item)
   std::string lbl = (std::string("* ") + item);
   std::string label = this->selectedMenu == index ? lbl : item;
   
-  Text* tm = new Text(label, SSD1306_WHITE, Text::Vector2 { static_cast<int16_t>(0), static_cast<int16_t>(8*2 + 6*this->textSize + this->textSize*8*index)}, this->textSize);
+  /*
+  Text::Vector2 Text::GetCenterCoordinates()
+{
+    int16_t x1, y1;
+    uint16_t w, h;
+    
+    gui.display->setTextSize(this->textSize);
+    gui.display->getTextBounds(this->text.c_str(), 0, 0, &x1, &y1, &w, &h);
+    
+    return Text::Vector2 {(SCREEN_WIDTH  - w) / 2,(SCREEN_HEIGHT - h) / 2};
+}
+// asddas
+  
+  */
+  // if(index >0)
+  Text* tm = new Text(label, SSD1306_WHITE, Text::Vector2 { static_cast<int16_t>(0), static_cast<int16_t>(8*2 + this->textSize*4 + this->textSize*8*index)}, this->textSize);
   this->options.push_back(tm);
 }
 
@@ -61,6 +76,10 @@ void List::selectDown()
     this->selectedMenu = 0;
 
   this->options[this->selectedMenu]->text.insert(0, "* ");
+  // if(this->options[this->selectedMenu]->position.y+8*this->options[this->selectedMenu]->textSize > SCREEN_HEIGHT)
+  // {
+  //   gui.scroll(false);
+  // }
 }
 void List::selectUp()
 {

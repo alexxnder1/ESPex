@@ -15,8 +15,8 @@ Text::Text(const std::string& t, uint16_t color, Text::Vector2 pos, int ts)
     this->type = Type::Text;
     
     this->size = this->CalculateSize();
+    gui.elements.push_back(static_cast<Text*>(this));
 }
-
 
 GUIElement::Vector2 Text::CalculateSize()
 {

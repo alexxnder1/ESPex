@@ -27,6 +27,7 @@ class GUI {
         void showList (List* list);
         void scroll(bool b);
         void updateList ();
+        void scrollOnceToShow(Text* elem, int screenHeight);
         ~GUI();
 
 };

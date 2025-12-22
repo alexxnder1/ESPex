@@ -22,7 +22,11 @@ void GUI::createText(Text* text)
 
 void GUI::clear()
 {
-  this->GlobalList = nullptr;
+  if(this->GlobalList != nullptr)
+  {
+    this->GlobalList->clearOptions();
+    this->GlobalList = nullptr;
+  }
 
   if(display != nullptr)
     display->clearDisplay();
@@ -38,7 +42,7 @@ void GUI::clear()
   this->elements.clear();
 }
 
-void GUI::showList(List* list)
+void GUI::showList(List& list)
 {
   this->clear();
   // this->destroyList();
@@ -130,7 +134,7 @@ void GUI::scroll(bool b)
 {
   display->clearDisplay();
   
-  for(int i = 0; i <= this->elements.size()-1; i++)
+  for(int i = 0; i < this->elements.size(); i++)
   {
     if(this->elements[i] == nullptr)
       continue;
@@ -138,6 +142,7 @@ void GUI::scroll(bool b)
       GUIElement* elem = this->elements[i];
       if(elem != nullptr)
       {
+        Serial.println(elem->position.y);
         // int16_t newY =  elem->position.y+SCROLL_SIZE;
         elem->position.y += (b ? 1 : -1) *SCROLL_SIZE;
         if(elem->type == GUIElement::Type::Text)

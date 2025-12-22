@@ -39,7 +39,9 @@ void ScanWifi()
     Serial.println("network-s>clearOptions");
 
     for(int i =0; i < WiFi.scanComplete(); i++) 
+    {
         gui.GlobalList->AddOption(std::string(WiFi.SSID(i).c_str()));
+    }
 
     if(networks.options.size() > 0)
     {
