@@ -29,7 +29,6 @@ void IndexMenu::BT()
 
 std::string getDeviceName(int model)
 {
-
     switch(model)
     {
         case 1:
