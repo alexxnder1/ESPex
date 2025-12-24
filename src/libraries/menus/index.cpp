@@ -27,7 +27,6 @@ void IndexMenu::BT()
     Bluetooth::Init();
 }
 
-
 std::string getDeviceName(int model)
 {
 
