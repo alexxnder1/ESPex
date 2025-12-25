@@ -129,72 +129,109 @@ void GUI::assignLastMenu(void (*m)())
 
 namespace {
   unsigned long previousMillis = 0;
-  const unsigned long scanInterval = 150;
+  unsigned long previousMillis2 = 0;
+  const unsigned long scanInterval = 250;
+  int nr = 0;
+  bool e = false;
 }
 
 void GUI::loop()
 { 
-  // ! processing controls
-  unsigned long currentMillis = millis();
-  if(currentMillis-previousMillis < scanInterval)
-    return;
+    // ! processing controls
+    uint16_t y = analogRead(JOYSTICK_VRx);
+    uint16_t x = analogRead(JOYSTICK_VRy);
+    bool pressed = digitalRead(JOYSTICK_SW) == 0;
+    unsigned long currentMillis = millis();
 
-  previousMillis = millis();
+    // ------------------------
+    // Double-tap detection X=4095
+    // ------------------------
+    static bool lastXPressed = false;            
+    static unsigned long firstTapTime = 0;       
+    static bool waitingForSecondTap = false;     
 
-  uint16_t y = analogRead(JOYSTICK_VRx);
-  uint16_t x = analogRead(JOYSTICK_VRy);
-  bool pressed = digitalRead(JOYSTICK_SW) == 0;
+    bool xPressed = (x == 4095);
+    bool justPressed = xPressed && !lastXPressed; // rising edge
+    lastXPressed = xPressed;
 
-  if(x == 4095)
-  {  
-    if(this->GlobalList == nullptr)
+    if(justPressed)
     {
-      this->scroll(true);
+        if(!waitingForSecondTap)
+        {
+            firstTapTime = currentMillis;
+            waitingForSecondTap = true;
+        }
+        else
+        {
+            if(currentMillis - firstTapTime <= 600) // double-tap detected
+            {
+                Serial.println("Double-tap detected!");
+                if(this->previousFunction != nullptr)
+                    this->previousFunction();
+
+                IndexMenu::scan = false;
+                waitingForSecondTap = false; // reset
+            }
+            else
+                firstTapTime = currentMillis;
+        }
     }
-    else if(this->GlobalList->options.size() > 1) {
-      this->GlobalList->selectUp();
-      this->updateList();
+
+    // Timeout pentru al doilea tap
+    if(waitingForSecondTap && (currentMillis - firstTapTime > 200))
+    {
+        waitingForSecondTap = false;
     }
-    // if(this->previousFunction != nullptr)
-    //   this->previousFunction();
+
+    // ------------------------
+    // periodic scan interval
+    // ------------------------
+    if(currentMillis - previousMillis < scanInterval)
+        return;
+
+    previousMillis = currentMillis;
+
+    // ------------------------
+    // list navigation
+    // ------------------------
+    if(xPressed)
+    {  
+        if(this->GlobalList != nullptr && this->GlobalList->options.size() > 1) {
+            this->GlobalList->selectUp();
+            this->updateList();
+        }
+    }
+
+    if(x == 0)
+    {
+        if(this->GlobalList != nullptr && this->GlobalList->options.size() > 1) {
+            this->GlobalList->selectDown();
+            this->updateList();
+        }
+    }
+
+    else if(y == 0)
+    {
+        if(this->GlobalList == nullptr)
+        {
+            this->scroll(true);
+        }
+    }
     
-    // IndexMenu::scan = false;
-  }
-
-
-  if(x == 0)
-  {
-    if(this->GlobalList == nullptr)
+    else if(y == 4095)
     {
-      this->scroll(false);
+        if(this->GlobalList == nullptr)
+        {
+            this->scroll(false);
+        }
     }
-    else if(this->GlobalList->options.size() > 1) {
-      this->GlobalList->selectDown();
-      this->updateList();
+
+    else if(pressed && this->GlobalList != nullptr)
+    {
+        this->GetCurrentOption()->onClickFunction();    
     }
-  }
-
- 
-  else if(y == 0)
-  {
-
-  }
-  
-  else if(y == 4095)
-  {
-    // if(this->GlobalList == nullptr)
-    // {
-    //   this->scroll(false);
-    // }
-    // else {
-    //   this->GlobalList->selectDown();
-    //   this->updateList();
-    // }
-  }
-
-  else if(pressed&& this->GlobalList != nullptr)
-    this->GetCurrentOption()->onClickFunction();    
 }
+
 
 Option* GUI::GetCurrentOption()
 {

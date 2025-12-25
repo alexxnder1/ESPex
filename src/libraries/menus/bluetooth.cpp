@@ -107,9 +107,9 @@ namespace Bluetooth {
         //         List(const std::string& titleStr, std::vector<Option*> options, void (*oe)()=nullptr);
 
         std::vector<Option*> options = { 
-            new Option("Shutdown", WHITE, nullptr, {Shutdown}),
-            new Option("Restart", WHITE, nullptr, {Shutdown}),
-            new Option("Chaos", WHITE, nullptr, {Shutdown})
+            new Option("Shutdown", WHITE, epd_bitmap_shutdown, {Shutdown}),
+            new Option("Restart", WHITE, epd_bitmap_restart, {Shutdown}),
+            new Option("Chaos", WHITE, epd_bitmap_chaos, {Shutdown})
         };
 
         btList = new List("BT Action", options, onExit);
