@@ -17,7 +17,7 @@
 #include <BLEServer.h>
 #include "BLE2902.h"
 #include "BLEHIDDevice.h"
-
+#include "icons.h"
 
 List* btList;
 std::vector<std::string> devices;
@@ -104,8 +104,15 @@ namespace Bluetooth {
     {
         gui.clear();
         onConnectFired=true;
-        
-        btList = new List("BT Action", { "Shutdown", "Restart", "Chaos", "Etc1", "Etc2", "Etc3" }, 1, {Shutdown}, onExit);
+        //         List(const std::string& titleStr, std::vector<Option*> options, void (*oe)()=nullptr);
+
+        std::vector<Option*> options = { 
+            new Option("Shutdown", WHITE, nullptr, {Shutdown}),
+            new Option("Restart", WHITE, nullptr, {Shutdown}),
+            new Option("Chaos", WHITE, nullptr, {Shutdown})
+        };
+
+        btList = new List("BT Action", options, onExit);
 
         Text* ble_connected = new Text(std::string("BLE Connected."), WHITE, GUIElement::Vector2{0,0}, 1);
         ble_connected->position = ble_connected->GetCenterCoordinates();

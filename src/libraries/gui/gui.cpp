@@ -1,9 +1,12 @@
+#include <Arduino.h>
 #include <string>
 #include <vector>
 #include "gui.h"
 #include "libraries/gui/text.h"
 #include "libraries/menus/index.h"
 #include "defines.h"
+#include "option.h"
+#include "icons.h"
 
 GUI::GUI(Adafruit_SSD1306* disp)
 {
@@ -52,6 +55,7 @@ void GUI::showList(List* list)
 
   this->clear();
   this->GlobalList = list;
+  
   this->updateList();
 }
 
@@ -64,14 +68,51 @@ void GUI::updateList()
   {
     this->createText(this->GlobalList->title);
 
-    for(Text* item : this->GlobalList->options)
-    {
-      this->createText(item);
-    }
-  }
+    if(this->GlobalList->selectedMenu >= this->GlobalList->options.size())
+      this->GlobalList->selectedMenu = 0;
+
+    Option* item = this->GlobalList->options[this->GlobalList->selectedMenu];
+    
+    this->createText(item->text);
   
+    if(item->bitmap != nullptr)
+    {
+      display->drawBitmap(
+          64-48/2,
+          32-48/2-5,
+          item->bitmap,
+          48,
+          48,
+          SSD1306_WHITE
+      );  
+    } 
+    if(this->GlobalList->selectedMenu < this->GlobalList->options.size()-1)
+    {    
+      display->drawBitmap(
+        SCREEN_WIDTH-8,
+        SCREEN_HEIGHT/2-16/2,
+        ra_bitmapra,
+        8,
+        16,
+        SSD1306_WHITE
+      );  
+    }
+
+    if(this->GlobalList->selectedMenu > 0)
+    {    
+      display->drawBitmap(
+        0,
+        SCREEN_HEIGHT/2-16/2,
+        la_bitmapla,
+        8,
+        16,
+        SSD1306_WHITE
+      );  
+    }
+
+    display->display();
+  } 
 }
-// asdasd
 
 GUI::~GUI()
 {
@@ -86,53 +127,80 @@ void GUI::assignLastMenu(void (*m)())
   this->previousFunction = m;
 }
 
-void GUI::processControls(uint16_t x, uint16_t y, bool pressed)
+namespace {
+  unsigned long previousMillis = 0;
+  const unsigned long scanInterval = 150;
+}
+
+void GUI::loop()
 { 
+  // ! processing controls
+  unsigned long currentMillis = millis();
+  if(currentMillis-previousMillis < scanInterval)
+    return;
+
+  previousMillis = millis();
+
+  uint16_t y = analogRead(JOYSTICK_VRx);
+  uint16_t x = analogRead(JOYSTICK_VRy);
+  bool pressed = digitalRead(JOYSTICK_SW) == 0;
+
   if(x == 4095)
   {  
-    if(this->previousFunction != nullptr)
-      this->previousFunction();
+    if(this->GlobalList == nullptr)
+    {
+      this->scroll(true);
+    }
+    else if(this->GlobalList->options.size() > 1) {
+      this->GlobalList->selectUp();
+      this->updateList();
+    }
+    // if(this->previousFunction != nullptr)
+    //   this->previousFunction();
     
-    IndexMenu::scan = false;
+    // IndexMenu::scan = false;
   }
 
 
   if(x == 0)
   {
-  }
-
- 
-  else if(y == 0)
-  {
-    if(this->GlobalList == nullptr)
-    {
-      this->scroll(true);
-    }
-    else {
-      this->GlobalList->selectUp();
-      this->updateList();
-    }
-  }
-  
-  else if(y == 4095)
-  {
     if(this->GlobalList == nullptr)
     {
       this->scroll(false);
     }
-    else {
+    else if(this->GlobalList->options.size() > 1) {
       this->GlobalList->selectDown();
       this->updateList();
     }
   }
 
-  else if(pressed&& this->GlobalList != nullptr)
+ 
+  else if(y == 0)
   {
-    // this->PreviousGlobalList
 
-    this->GlobalList->functions[this->GlobalList->selectedMenu]();
   }
+  
+  else if(y == 4095)
+  {
+    // if(this->GlobalList == nullptr)
+    // {
+    //   this->scroll(false);
+    // }
+    // else {
+    //   this->GlobalList->selectDown();
+    //   this->updateList();
+    // }
+  }
+
+  else if(pressed&& this->GlobalList != nullptr)
+    this->GetCurrentOption()->onClickFunction();    
 }
+
+Option* GUI::GetCurrentOption()
+{
+  return this->GlobalList != nullptr ? this->GlobalList->options[this->GlobalList->selectedMenu] : nullptr;
+}
+
 #define SCROLL_SIZE 16
 
 void GUI::scroll(bool b)

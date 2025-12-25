@@ -5,8 +5,12 @@
 #include "index.h"
 #include "libraries/gui/gui.h"
 #include "libraries/gui/text.h"
+#include "libraries/gui/option.h"
+#include <stdint.h>
+#include <stdlib.h>
+#include "icons.h"
 
-std::vector<std::string> networks_names;
+std::vector<Option*> network_options;
 List* networksList;
 
 extern GUI gui;
@@ -36,22 +40,10 @@ const unsigned char wifi_scan [] PROGMEM = {
 void IndexMenu::WIFI()
 {
     gui.clear();
-    networksList = new List(std::string("Wifis"), networks_names, 1, {}, onWifiExit);
+    networksList = new List(std::string("Wifis"), network_options, onWifiExit);
     
-     // logo showing
-    gui.display->drawBitmap(
-        64-32/2,
-        16,
-        wifi_scan,
-        36,
-        36,
-        SSD1306_WHITE
-    );
-
-    gui.display->display(); 
-
     std::string str = std::string("Scanning...");
-    Text* scanning = new Text(str, SSD1306_WHITE, Text::Vector2 {SCREEN_WIDTH/2 - 6*str.size()/2, SCREEN_HEIGHT-8}, 1);
+    Text* scanning = new Text(str, SSD1306_WHITE, Text::Vector2 {SCREEN_WIDTH/2 - 6*str.size()/2, SCREEN_HEIGHT/2}, 1);
 
     gui.createText(scanning);   
     WiFi.scanNetworks(true);
@@ -59,16 +51,39 @@ void IndexMenu::WIFI()
     scan = true;
 }
 
-// 6x8
+
+struct Signal {
+    std::string text;
+    const unsigned char* bmp;
+};
+
+Signal GetSignalData(int32_t dBm)
+{
+    int v = abs(dBm);
+
+    if      (v <= 30)  return Signal { "Excellent", excellent_bitmap };
+    else if (v <= 50)  return Signal { "Very Good", epd_bitmap_very_good };
+    else if (v <= 70)  return Signal { "Good", epd_bitmap_good};
+    else if (v <= 100) return Signal { "Weak", epd_bitmap_weak };
+
+    return {};
+}
 void ScanWifi()
 {
     networksList->clearOptions();
     Serial.println("network-s>clearOptions");
+    
+    int n = WiFi.scanComplete();
+    if(n<=0)
+        return;
 
-    for(int i =0; i < WiFi.scanComplete(); i++) 
+    for(int i = 0; i < n; i++) 
     {
-        networksList->AddOption(std::string(WiFi.SSID(i).c_str()));
+        int rssi = abs(WiFi.RSSI(i));
+        Signal sigData = GetSignalData(rssi);
+        networksList->AddOption(new Option(std::string(WiFi.SSID(i).c_str()), WHITE, sigData.bmp, nullptr));
     }
+
 
     if(networksList->options.size() > 0)
     {
@@ -77,10 +92,12 @@ void ScanWifi()
 
         else gui.updateList();
     }
+    WiFi.scanDelete();
 }
 
+
 unsigned long previousMillis = 0;
-const unsigned long scanInterval = 8000;
+const unsigned long scanInterval = 5000;
 
 void IndexMenu::loop()
 {
@@ -91,6 +108,12 @@ void IndexMenu::loop()
     if(currentMillis-previousMillis >= scanInterval)
     {
         previousMillis = millis();
-        ScanWifi();   
+        WiFi.scanNetworks(true);
+    }
+
+    int n = WiFi.scanComplete();
+    if(n > 0)
+    {
+        ScanWifi();
     }
 }

@@ -8,6 +8,7 @@
 #include "libraries/gui/list.h"
 #include "libraries/gui/gui.h"
 #include "libraries/gui/text.h"
+#include "libraries/gui/option.h"
 
 class GUI {
     
@@ -21,12 +22,13 @@ class GUI {
         GUI(Adafruit_SSD1306* disp);
         void init();
         void clear();
-        void processControls(uint16_t x, uint16_t y, bool pressed);
+        void loop();
         void createText (Text* text);
         void showList (List* list);
         void scroll(bool b);
         void updateList ();
         void scrollOnceToShow(Text* elem, int screenHeight);
+        Option* GetCurrentOption();
         ~GUI();
 
 };

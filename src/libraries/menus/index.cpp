@@ -8,14 +8,24 @@
 
 #include <Arduino.h>
 #include "esp_system.h"
+#include "libraries/gui/option.h"
+
+#include "icons.h"
 
 List* mainList;
 
 extern GUI gui;
 
+// asds
 void IndexMenu::show()
 {
-    mainList = new List(std::string("Menu"), {"WiFi", "BT", "About"}, 2, {WIFI, BT, About});
+    std::vector<Option*> options = {
+        new Option("WiFi", WHITE, wifi_bitmapwifi, WIFI),
+        new Option("BT", WHITE, bt_bitmapbt, BT),
+        new Option("About", WHITE, about_bitmapinfo, About),
+    };
+
+    mainList = new List(std::string("Menu"), options);
     gui.showList(mainList);
 }
 
