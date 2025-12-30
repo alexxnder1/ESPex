@@ -44,7 +44,7 @@ namespace Bluetooth {
 
         Text* t = new Text(std::string("Waiting for BLE Connection..."), WHITE, GUIElement::Vector2{0,0}, 1);
         t->position = t->GetCenterCoordinates();
-        gui.createText(t);  
+        gui.drawText(t);  
         
         Serial.println("[Bluetooth] Starting BLE Keyboard...");
 
@@ -58,7 +58,7 @@ namespace Bluetooth {
 
         Text* t = new Text(std::string("Quiting..."), WHITE, GUIElement::Vector2{0,0}, 1);
         t->position = t->GetCenterCoordinates();
-        gui.createText(t);  
+        gui.drawText(t);  
 
         gui.clear();
 
@@ -116,7 +116,7 @@ namespace Bluetooth {
 
         Text* ble_connected = new Text(std::string("BLE Connected."), WHITE, GUIElement::Vector2{0,0}, 1);
         ble_connected->position = ble_connected->GetCenterCoordinates();
-        gui.createText(ble_connected);  
+        gui.drawText(ble_connected);  
 
         delay(1500);
         // safe check (if user exits while waiting)

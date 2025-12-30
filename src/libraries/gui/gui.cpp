@@ -14,7 +14,7 @@ GUI::GUI(Adafruit_SSD1306* disp)
 }
 
 // creating text
-void GUI::createText(Text* text)
+void GUI::drawText(Text* text)
 {
   display->setTextSize(text->textSize);
   display->setTextColor(text->c);
@@ -66,14 +66,14 @@ void GUI::updateList()
 
   if(this->GlobalList!=nullptr)
   {
-    this->createText(this->GlobalList->title);
+    this->drawText(this->GlobalList->title);
 
     if(this->GlobalList->selectedMenu >= this->GlobalList->options.size())
       this->GlobalList->selectedMenu = 0;
 
     Option* item = this->GlobalList->options[this->GlobalList->selectedMenu];
     
-    this->createText(item->text);
+    this->drawText(item->text);
   
     if(item->bitmap != nullptr)
     {
@@ -129,10 +129,8 @@ void GUI::assignLastMenu(void (*m)())
 
 namespace {
   unsigned long previousMillis = 0;
-  unsigned long previousMillis2 = 0;
   const unsigned long scanInterval = 250;
-  int nr = 0;
-  bool e = false;
+  bool reset = false; 
 }
 
 void GUI::loop()
@@ -163,7 +161,7 @@ void GUI::loop()
         }
         else
         {
-            if(currentMillis - firstTapTime <= 600) // double-tap detected
+            if(currentMillis - firstTapTime <= 400) // double-tap detected
             {
                 Serial.println("Double-tap detected!");
                 if(this->previousFunction != nullptr)
@@ -178,7 +176,7 @@ void GUI::loop()
     }
 
     // Timeout pentru al doilea tap
-    if(waitingForSecondTap && (currentMillis - firstTapTime > 200))
+    if(waitingForSecondTap && (currentMillis - firstTapTime > 260))
     {
         waitingForSecondTap = false;
     }
@@ -199,6 +197,7 @@ void GUI::loop()
         if(this->GlobalList != nullptr && this->GlobalList->options.size() > 1) {
             this->GlobalList->selectUp();
             this->updateList();
+            reset = true;
         }
     }
 
@@ -207,6 +206,7 @@ void GUI::loop()
         if(this->GlobalList != nullptr && this->GlobalList->options.size() > 1) {
             this->GlobalList->selectDown();
             this->updateList();
+            reset = true;
         }
     }
 
@@ -215,6 +215,7 @@ void GUI::loop()
         if(this->GlobalList == nullptr)
         {
             this->scroll(true);
+            reset = true;
         }
     }
     
@@ -223,13 +224,17 @@ void GUI::loop()
         if(this->GlobalList == nullptr)
         {
             this->scroll(false);
+            reset = true;
         }
     }
 
-    else if(pressed && this->GlobalList != nullptr)
+    else if(!reset && (pressed && this->GlobalList != nullptr))
     {
-        this->GetCurrentOption()->onClickFunction();    
+      this->GetCurrentOption()->onClickFunction();   
+      reset = true; 
     }
+    
+    else reset = false; 
 }
 
 
@@ -256,7 +261,7 @@ void GUI::scroll(bool b)
         // int16_t newY =  elem->position.y+SCROLL_SIZE;
         elem->position.y += (b ? 1 : -1) *SCROLL_SIZE;
         if(elem->type == GUIElement::Type::Text)
-          this->createText(static_cast<Text*>(elem)); // safe, i checked type.
+          this->drawText(static_cast<Text*>(elem)); // safe, i checked type.
 
         // this->updateElementPosition(elem, GUIElement::Vector2 { elem->position.x, newY});
       }

@@ -74,15 +74,15 @@ void IndexMenu::About()
     Text* fsr = new Text(std::string("Flash Size Revision: ") + std::to_string(spi_flash_get_chip_size() / (1024 * 1024)) + std::string(" MB"),  SSD1306_WHITE, Text::Vector2 {0, 8*14}, 1);
     Text* idf = new Text(std::string("ESP-IDF Version: ") + std::string(esp_get_idf_version()), SSD1306_WHITE, Text::Vector2 {0, 8*15}, 1);
 
-    gui.createText(about);
-    gui.createText(device);
-    gui.createText(cpu_cores);
-    gui.createText(features);
-    gui.createText(wifi);
-    gui.createText(ble);
-    gui.createText(bt);
-    gui.createText(flash);
-    gui.createText(sil);
-    gui.createText(fsr);
-    gui.createText(idf);
+    gui.drawText(about);
+    gui.drawText(device);
+    gui.drawText(cpu_cores);
+    gui.drawText(features);
+    gui.drawText(wifi);
+    gui.drawText(ble);
+    gui.drawText(bt);
+    gui.drawText(flash);
+    gui.drawText(sil);
+    gui.drawText(fsr);
+    gui.drawText(idf);
 } 

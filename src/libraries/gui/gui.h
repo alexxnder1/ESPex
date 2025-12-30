@@ -23,7 +23,7 @@ class GUI {
         void init();
         void clear();
         void loop();
-        void createText (Text* text);
+        void drawText (Text* text);
         void showList (List* list);
         void scroll(bool b);
         void updateList ();
