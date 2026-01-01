@@ -107,12 +107,12 @@ namespace Bluetooth {
         //         List(const std::string& titleStr, std::vector<Option*> options, void (*oe)()=nullptr);
 
         std::vector<Option*> options = { 
-            new Option("Shutdown", WHITE, epd_bitmap_shutdown, {Shutdown}),
-            new Option("Restart", WHITE, epd_bitmap_restart, {Shutdown}),
-            new Option("Chaos", WHITE, epd_bitmap_chaos, {Shutdown})
+            new Option("Shutdown", 1, epd_bitmap_shutdown, {Shutdown}),
+            new Option("Restart", 1, epd_bitmap_restart, {Shutdown}),
+            new Option("Chaos", 1, epd_bitmap_chaos, {Shutdown})
         };
 
-        btList = new List("BT Action", options, onExit);
+        btList = new List("BT Action", options, List::Theme::One, onExit);
 
         Text* ble_connected = new Text(std::string("BLE Connected."), WHITE, GUIElement::Vector2{0,0}, 1);
         ble_connected->position = ble_connected->GetCenterCoordinates();
@@ -121,7 +121,7 @@ namespace Bluetooth {
         delay(1500);
         // safe check (if user exits while waiting)
         if (bk.isConnected() && BLEDevice::getInitialized()) 
-            gui.showList(btList);
+            gui.prepareList(btList);
     }
 
     void Loop()

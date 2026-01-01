@@ -25,7 +25,7 @@ void onWifiExit()
 void IndexMenu::WIFI()
 {
     gui.clear();
-    networksList = new List(std::string("Wifis"), network_options, onWifiExit);
+    networksList = new List(std::string("Wifis"), network_options, List::Theme::One, onWifiExit);
     
     std::string str = std::string("Scanning...");
     Text* scanning = new Text(str, SSD1306_WHITE, Text::Vector2 {SCREEN_WIDTH/2 - 6*str.size()/2, SCREEN_HEIGHT/2}, 1);
@@ -66,16 +66,18 @@ void ScanWifi()
     {
         int rssi = abs(WiFi.RSSI(i));
         Signal sigData = GetSignalData(rssi);
-        networksList->AddOption(new Option(std::string(WiFi.SSID(i).c_str()), WHITE, sigData.bmp, nullptr));
+        //     Option(const std::string& t, const unsigned char* bmp, void (*onClickFunction)());
+
+        networksList->AddOption(new Option(std::string(WiFi.SSID(i).c_str()), 1, sigData.bmp, nullptr));
     }
 
 
     if(networksList->options.size() > 0)
     {
         if(gui.GlobalList != networksList)
-            gui.showList(networksList);
+            gui.prepareList(networksList);
 
-        else gui.updateList();
+        else gui.drawList();
     }
     WiFi.scanDelete();
 }

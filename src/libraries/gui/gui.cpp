@@ -45,7 +45,7 @@ void GUI::clear()
   this->elements.clear();
 }
 
-void GUI::showList(List* list)
+void GUI::prepareList(List* list)
 {
   if(this->GlobalList != nullptr)
   {
@@ -55,12 +55,11 @@ void GUI::showList(List* list)
 
   this->clear();
   this->GlobalList = list;
-  
-  this->updateList();
+  this->drawList();
 }
 
 
-void GUI::updateList()
+void GUI::drawList()
 {
   display->clearDisplay();
 
@@ -71,49 +70,59 @@ void GUI::updateList()
     if(this->GlobalList->selectedMenu >= this->GlobalList->options.size())
       this->GlobalList->selectedMenu = 0;
 
-    Option* item = this->GlobalList->options[this->GlobalList->selectedMenu];
-    
-    this->drawText(item->text);
-  
-    if(item->bitmap != nullptr)
+    if(this->GlobalList->theme == List::Theme::One)
     {
-      display->drawBitmap(
-          64-48/2,
-          32-48/2-5,
-          item->bitmap,
-          48,
-          48,
-          SSD1306_WHITE
-      );  
-    } 
-    if(this->GlobalList->selectedMenu < this->GlobalList->options.size()-1)
-    {    
-      display->drawBitmap(
-        SCREEN_WIDTH-8,
-        SCREEN_HEIGHT/2-16/2,
-        ra_bitmapra,
-        8,
-        16,
-        SSD1306_WHITE
-      );  
-    }
+        Option* item = this->GlobalList->options[this->GlobalList->selectedMenu];
+        
+        this->drawText(item->text);
+      
+        if(item->bitmap != nullptr)
+        {
+          display->drawBitmap(
+              64-48/2,
+              32-48/2-5,
+              item->bitmap,
+              48,
+              48,
+              SSD1306_WHITE
+          );  
+        } 
+        if(this->GlobalList->selectedMenu < this->GlobalList->options.size()-1)
+        {    
+          display->drawBitmap(
+            SCREEN_WIDTH-8,
+            SCREEN_HEIGHT/2-16/2,
+            ra_bitmapra,
+            8,
+            16,
+            SSD1306_WHITE
+          );  
+        }
 
-    if(this->GlobalList->selectedMenu > 0)
-    {    
-      display->drawBitmap(
-        0,
-        SCREEN_HEIGHT/2-16/2,
-        la_bitmapla,
-        8,
-        16,
-        SSD1306_WHITE
-      );  
+        if(this->GlobalList->selectedMenu > 0)
+        {    
+          display->drawBitmap(
+            0,
+            SCREEN_HEIGHT/2-16/2,
+            la_bitmapla,
+            8,
+            16,
+            SSD1306_WHITE
+          );  
+        }
+
+    }
+    else if(this->GlobalList->theme == List::Theme::Multiple)
+    {
+      for(Option* opt : this->GlobalList->options)
+      {
+        this->drawText(opt->text);
+      }
     }
 
     display->display();
   } 
 }
-
 GUI::~GUI()
 {
   // for(GUIElement* elem : this->elements)
@@ -195,18 +204,22 @@ void GUI::loop()
     if(xPressed)
     {  
         if(this->GlobalList != nullptr && this->GlobalList->options.size() > 1) {
-            this->GlobalList->selectUp();
-            this->updateList();
-            reset = true;
+            if(this->GlobalList->theme == List::Theme::One)
+            {
+              this->GlobalList->ScrollUp();
+              reset=true;
+            }
         }
     }
 
     if(x == 0)
     {
         if(this->GlobalList != nullptr && this->GlobalList->options.size() > 1) {
-            this->GlobalList->selectDown();
-            this->updateList();
-            reset = true;
+            if(this->GlobalList->theme == List::Theme::One)
+            {
+              this->GlobalList->ScrollDown();
+              reset=true;
+            }
         }
     }
 
@@ -217,6 +230,11 @@ void GUI::loop()
             this->scroll(true);
             reset = true;
         }
+        else if(this->GlobalList->theme == List::Theme::Multiple && this->GlobalList->options.size() > 1)
+        {
+            this->GlobalList->ScrollUp();
+            reset=true;
+        }
     }
     
     else if(y == 4095)
@@ -225,6 +243,11 @@ void GUI::loop()
         {
             this->scroll(false);
             reset = true;
+        }
+        else if(this->GlobalList->theme == List::Theme::Multiple && this->GlobalList->options.size() > 1)
+        {
+          this->GlobalList->ScrollDown();
+          reset=true;
         }
     }
 
@@ -236,7 +259,6 @@ void GUI::loop()
     
     else reset = false; 
 }
-
 
 Option* GUI::GetCurrentOption()
 {

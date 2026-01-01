@@ -7,14 +7,15 @@
 
 extern GUI gui;
 
-List::List(const std::string& titleStr, std::vector<Option*> options, void (*oe)())
+List::List(const std::string& titleStr, std::vector<Option*> options, Theme theme, void (*oe)())
 {
   this->title = new Text(titleStr, WHITE,  Text::Vector2 { 0, 0}, 1);
   this->selectedMenu = 0;
-  this->textSize = textSize;
+  // this->textSize = textSize;
   this->onExit = onExit;
   this->options = options;
 // 
+  this->theme = theme;
 }
 
 void List::clearOptions()
@@ -35,6 +36,24 @@ void List::clearOptions()
 
 void List::AddOption(Option* opt)
 {
+  Text* tm = opt->text;
+  tm->textSize = 1;
+  tm->c = WHITE;
+
+  if(theme == List::Theme::Multiple)
+  {
+    tm->position.y = 8*2+this->options.size()*8;
+  }
+
+  else if(theme == List::Theme::One)
+  {
+    tm->position = tm->GetCenterCoordinates();
+    tm->position.y += SCREEN_HEIGHT/2.5f;
+    Serial.println("center coordinates");
+    Serial.println(tm->GetCenterCoordinates().y);
+
+  }
+
   this->options.push_back(opt);
 }
 
@@ -76,4 +95,15 @@ void List::selectUp()
     this->selectedMenu = this->options.size()-1;
 
   // this->options[this->selectedMenu]->text.insert(0, "* ");
+}
+void List::ScrollDown()
+{
+  this->selectDown();
+  gui.drawList();
+}
+
+void List::ScrollUp()
+{
+  this->selectUp();
+  gui.drawList();
 }

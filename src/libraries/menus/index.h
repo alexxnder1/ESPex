@@ -7,6 +7,7 @@ namespace IndexMenu
     void show();
     void hide();
     void WIFI();
+    void IR();
     void BT();
     void loop();
     void About();   

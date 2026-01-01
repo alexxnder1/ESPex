@@ -7,7 +7,12 @@
 
 class List {
     public:
-        List(const std::string& titleStr, std::vector<Option*> options, void (*oe)()=nullptr);
+        enum Theme {
+            One,
+            Multiple
+        };
+
+        List(const std::string& titleStr, std::vector<Option*> options, Theme theme, void (*oe)()=nullptr);
 
         Text* title=nullptr;
         
@@ -15,10 +20,14 @@ class List {
         
         void (*onExit)() = nullptr;
         int textSize;
+
+        Theme theme;
         
         int selectedMenu = 0;
         void selectUp();
         void selectDown();
+        void ScrollDown();
+        void ScrollUp();
         void clearOptions();
         void AddOption(Option* opt);
         ~List();

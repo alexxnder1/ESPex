@@ -40,5 +40,8 @@ Text::Vector2 Text::GetCenterCoordinates()
     gui.display->setTextSize(this->textSize);
     gui.display->getTextBounds(this->text.c_str(), 0, 0, &x1, &y1, &w, &h);
     
+    Serial.println(this->text.c_str());
+    // Serial.println(tm->GetCenterCoordinates());
+    
     return Text::Vector2 {(SCREEN_WIDTH  - w) / 2,(SCREEN_HEIGHT - h) / 2};
 }

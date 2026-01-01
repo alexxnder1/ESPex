@@ -10,6 +10,7 @@ public:
     int textSize;
     
     Text(const std::string &t, uint16_t color, Text::Vector2 pos, int size);
+
     GUIElement::Vector2 CalculateSize();
     Text::Vector2 GetCenterCoordinates();
 };

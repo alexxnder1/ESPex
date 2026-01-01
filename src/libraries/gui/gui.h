@@ -24,9 +24,9 @@ class GUI {
         void clear();
         void loop();
         void drawText (Text* text);
-        void showList (List* list);
+        void prepareList (List* list);
         void scroll(bool b);
-        void updateList ();
+        void drawList ();
         void scrollOnceToShow(Text* elem, int screenHeight);
         Option* GetCurrentOption();
         ~GUI();

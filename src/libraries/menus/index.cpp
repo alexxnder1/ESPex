@@ -20,16 +20,23 @@ extern GUI gui;
 void IndexMenu::show()
 {
     std::vector<Option*> options = {
-        new Option("WiFi", WHITE, wifi_bitmapwifi, WIFI),
-        new Option("BT", WHITE, bt_bitmapbt, BT),
-        new Option("About", WHITE, about_bitmapinfo, About),
+        new Option("IR",  1, ir_bitmapir, IR),
+        new Option("WiFi", 1, wifi_bitmapwifi, WIFI),
+        new Option("BT", 1, bt_bitmapbt, BT),
+        new Option("About", 1, about_bitmapinfo, About),
     };
 
-    mainList = new List(std::string("Menu"), options);
-    gui.showList(mainList);
+    mainList = new List(std::string("Menu"), options, List::Theme::One);
+    gui.prepareList(mainList);
 }
 
 #include "bluetooth.h"
+#include "ir.h"
+
+void IndexMenu::IR()
+{
+    IR::Show();
+}
 
 void IndexMenu::BT()
 {

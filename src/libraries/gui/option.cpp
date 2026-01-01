@@ -6,22 +6,16 @@
 // 
 #include "gui.h"
 #include "option.h"
+#include "list.h"
 #include "icons.h"
+#include "text.h"
 
 extern GUI gui;
 
-Option::Option(const std::string& t, uint16_t color, const unsigned char* bmp, void (*ocf)())
+Option::Option(const std::string& t, int size, const unsigned char* bmp, void (*ocf)())
 {  
-  std::string label = t;
-
-  Text* tm = new Text(label, SSD1306_WHITE, Text::Vector2{0,0}, 1);
-  Text::Vector2 newPos = tm->GetCenterCoordinates();
- 
- //asdasd
-  newPos.y += SCREEN_HEIGHT/2.5f;
-  tm->position = newPos;
-  
+  this->text = new Text(t, WHITE, GUIElement::Vector2{0,0}, size);
   this->bitmap = bmp;
   this->onClickFunction = ocf; 
-  this->text = tm;
 }
+// asd
