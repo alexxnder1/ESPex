@@ -13,9 +13,13 @@ List::List(const std::string& titleStr, std::vector<Option*> options, Theme them
   this->selectedMenu = 0;
   // this->textSize = textSize;
   this->onExit = onExit;
-  this->options = options;
-// 
   this->theme = theme;
+  // this->options = options;
+  for(Option* opt : options)
+  {
+    this->AddOption(opt);
+  }
+// 
 }
 
 void List::clearOptions()
@@ -73,14 +77,16 @@ void removeAllOccurrences(std::string& str, const std::string& seq) {
 }
 
 void List::selectDown()
-{
-  // removeAllOccurrences(this->options[this->selectedMenu]->text->text, "* ");
+{  
+  if(this->theme == List::Theme::Multiple)
+    removeAllOccurrences(this->options[this->selectedMenu]->text->text, "* ");
 
   this->selectedMenu++;
   if(this->selectedMenu >= this->options.size())
     this->selectedMenu = 0;
-
-  // this->options[this->selectedMenu]->text->text.insert(0, "* ");
+  
+  if(this->theme == List::Theme::Multiple)
+    this->options[this->selectedMenu]->text->text.insert(0, "* ");
   // if(this->options[this->selectedMenu]->position.y+8*this->options[this->selectedMenu]->textSize > SCREEN_HEIGHT)
   // {
   //   gui.scroll(false);
@@ -88,13 +94,15 @@ void List::selectDown()
 }
 void List::selectUp()
 {
-  // removeAllOccurrences(this->options[this->selectedMenu]->text->text, "* ");
+  if(this->theme == List::Theme::Multiple)
+    removeAllOccurrences(this->options[this->selectedMenu]->text->text, "* ");
 
   this->selectedMenu--;
   if(this->selectedMenu < 0)
     this->selectedMenu = this->options.size()-1;
 
-  // this->options[this->selectedMenu]->text.insert(0, "* ");
+  if(this->theme == List::Theme::Multiple)
+    this->options[this->selectedMenu]->text->text.insert(0, "* ");
 }
 void List::ScrollDown()
 {

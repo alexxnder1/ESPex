@@ -19,11 +19,16 @@ namespace IR {
     List* irDevices;
     std::vector<Option*> irOptions;
 
+    struct NECcode {
+        uint64_t value;
+        uint16_t bits;
+    };
+    std::vector<NECcode> codes;
+
     void onExit()
     {
-        Serial.println("exitting..");
+        codes.clear();
         irrecv.disableIRIn();
-        
         Serial.println("[IR] Stopped capturing IR codes.");
     }
 
@@ -46,7 +51,9 @@ namespace IR {
     
     void onClick()
     {
-
+        NECcode nec = codes[irDevices->selectedMenu];
+        irsend.sendNEC(nec.value, nec.bits);
+        Serial.println("Code retransmitted!");
     }
     
     void Loop()
@@ -58,6 +65,7 @@ namespace IR {
             if(irDevices != nullptr)
             {
                 irDevices->AddOption(new Option(std::string(resultToHexidecimal(&results).c_str()), 1, NULL, onClick));
+                codes.push_back(NECcode {results.value, results.bits});
                 // networksList->AddOption(new Option(std::string(WiFi.SSID(i).c_str()), WHITE, sigData.bmp, nullptr));
                 gui.drawList();
             }
