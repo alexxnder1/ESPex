@@ -28,6 +28,5 @@
     <li> IRremoteESP8266
 </ul>
 
-<br/>
 <h3>📸 Images</h3>
 <img src="preview.png" width="500">
