@@ -29,4 +29,4 @@
 </ul>
 
 <h3>📸 Images</h3>
-<img src="preview.png" width="500">
+<img src="preview.png" width="1200" height="720">
